@@ -27,7 +27,9 @@ namespace PatternMatching
 {
     using System;
 
-    internal interface IUnexecutable { }
+    // Maybe use this to implement my own Tuple kind so people can use the .NET-native
+    // Tuple without issues.
+    // internal interface IUnexecutable { }
 
     public class FutureWithPredicate<T>
     {
@@ -38,7 +40,7 @@ namespace PatternMatching
 
     public static class Extensions
     {
-        public static Tuple<FutureWithPredicate<T>, bool> With<T>(this T value, Func<T, bool> predicate)
+        public static Tuple<FutureWithPredicate<T>, bool> When<T>(this T value, Func<T, bool> predicate)
         {
             /*
             //
@@ -60,7 +62,7 @@ namespace PatternMatching
             return new Tuple<T, bool>(future.Item1.Value, future.Item1.Matched | future.Item2);
         }
 
-        public static Tuple<FutureWithPredicate<T>, bool> With<T>(this Tuple<T, bool> value, Func<T, bool> predicate)
+        public static Tuple<FutureWithPredicate<T>, bool> When<T>(this Tuple<T, bool> value, Func<T, bool> predicate)
         {
             return new Tuple<FutureWithPredicate<T>, bool>(new FutureWithPredicate<T>() { Value = value.Item1, Predicate = predicate }, value.Item2);
         }
@@ -71,6 +73,22 @@ namespace PatternMatching
                 lambda(result.Item1);
 
             return new Tuple<T, object>(result.Item1, new object());
+        }
+
+        public static Tuple<T, bool> Then<T>(this Tuple<T, bool> previous, Action<T> lambda)
+        {
+            if (previous.Item2 && lambda != null)
+                lambda(previous.Item1);
+
+            return previous;
+        }
+
+        public static Tuple<T, bool> Then<T>(this Tuple<T, bool> previous, Action lambda)
+        {
+            if (previous.Item2 && lambda != null)
+                lambda();
+
+            return previous;
         }
     }
 }

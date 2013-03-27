@@ -40,7 +40,7 @@ namespace PatternMatching.Tests
             Tuple<FutureWithPredicate<int>, bool> actual = null;
             Func<int,bool> predicate = x => x == 5;
 
-            actual = a.With(predicate);
+            actual = a.When(predicate);
 
             Assert.IsNotNull(actual);
             Assert.AreSame(predicate, actual.Item1.Predicate);
@@ -55,7 +55,7 @@ namespace PatternMatching.Tests
             Tuple<FutureWithPredicate<int>, bool> actual = null;
             Func<int, bool> predicate = x => x != 5;
 
-            actual = a.With(predicate);
+            actual = a.When(predicate);
 
             Assert.IsNotNull(actual);
             Assert.AreSame(predicate, actual.Item1.Predicate);
@@ -72,7 +72,7 @@ namespace PatternMatching.Tests
             Func<int, bool> predicate = x => x == 5;
             Action<int> lambda = x => output = x.ToString();
 
-            actual = a.With(predicate).Do(lambda).Item1;
+            actual = a.When(predicate).Do(lambda).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.AreEqual<string>("5", output);
@@ -87,7 +87,7 @@ namespace PatternMatching.Tests
             Func<int, bool> predicate = x => x != 5;
             Action<int> lambda = x => output = x.ToString();
 
-            actual = a.With(predicate).Do(lambda).Item1;
+            actual = a.When(predicate).Do(lambda).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.IsNull(output);
@@ -104,8 +104,8 @@ namespace PatternMatching.Tests
             Action<int> lambda1 = x => output1 = "It is 5!";
             Action<int> lambda2 = x => output2 = "It is not 5!";
 
-            actual = a.With(predicate1).Do(lambda1)
-                        .With(predicate2).Do(lambda2).Item1;
+            actual = a.When(predicate1).Do(lambda1)
+                        .When(predicate2).Do(lambda2).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.AreEqual<string>("It is 5!", output1);
@@ -132,8 +132,9 @@ namespace PatternMatching.Tests
             var sb = new StringBuilder(640);
 
             foreach (var i in Enumerable.Range(1, 100))
-                i.With(x => x % 3 == 0).Do(_ => sb.AppendLine("Fizz"))
-                 .With(x => x % 5 == 0).Do(_ => sb.AppendLine("Buzz"))
+                i.When(x => x % 3 == 0).Do(_ => sb.Append("Fizz"))
+                 .When(x => x % 5 == 0).Do(_ => sb.Append("Buzz"))
+                 .Then(() => sb.AppendLine())
                  .Otherwise(x => sb.AppendLine(x.ToString()));
 
             Assert.AreEqual<string>(@"1
@@ -150,8 +151,7 @@ Buzz
 Fizz
 13
 14
-Fizz
-Buzz
+FizzBuzz
 16
 17
 Fizz
@@ -166,8 +166,7 @@ Buzz
 Fizz
 28
 29
-Fizz
-Buzz
+FizzBuzz
 31
 32
 Fizz
@@ -182,8 +181,7 @@ Buzz
 Fizz
 43
 44
-Fizz
-Buzz
+FizzBuzz
 46
 47
 Fizz
@@ -198,8 +196,7 @@ Buzz
 Fizz
 58
 59
-Fizz
-Buzz
+FizzBuzz
 61
 62
 Fizz
@@ -214,8 +211,7 @@ Buzz
 Fizz
 73
 74
-Fizz
-Buzz
+FizzBuzz
 76
 77
 Fizz
@@ -230,8 +226,7 @@ Buzz
 Fizz
 88
 89
-Fizz
-Buzz
+FizzBuzz
 91
 92
 Fizz

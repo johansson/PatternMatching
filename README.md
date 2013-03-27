@@ -18,7 +18,7 @@ A few examples are:
 
 ```CSharp
 int a = 5;
-a.With(x => x == 5).Do(_ => Console.WriteLine("I am five!"));
+a.When(x => x == 5).Do(_ => Console.WriteLine("I am five!"));
 ```
 
 That example should print "I am five!" to the standard output.
@@ -27,24 +27,30 @@ You can even chain `With`/`Do` operations together!
 
 ```CSharp
 int a = 5;
-a.With(x => x == 5).Do(_ => Console.WriteLine("I am five!"))
- .With(x => x != 5).Do(_ => Console.WriteLine("I am not five!"))
- .With(x => x >= 5).Do(x => Console.WriteLine("{0} is greater than or equal to five!", x))
- .With(x => x <  5).Do(x => Console.WriteLine("{0} is less than five!", x));
+a.When(x => x == 5).Do(_ => Console.WriteLine("I am five!"))
+ .When(x => x != 5).Do(_ => Console.WriteLine("I am not five!"))
+ .When(x => x >= 5).Do(x => Console.WriteLine("{0} is greater than or equal to five!", x))
+ .When(x => x <  5).Do(x => Console.WriteLine("{0} is less than five!", x));
 ```
 
 That example should print only the lines "I am five!" and
 "5 is greater than or equal to five!" to the standard output.
 
-Finally, there's the `Otherwise` operation, which is the
-default fallthrough in case nothing else has been satisfied.
+Finally, there are two operations that can be executed after
+existing ones:
 
-We'll demonstrate this with the classical [FizzBuzz](http://imranontech.com/2007/01/24/using-fizzbuzz-to-find-developers-who-grok-coding/) problem.
+* the `Otherwise` operation, which is the
+default fallthrough in case nothing else has been satisfied
+* the `Then` operation, which gives you a continuation on
+what to do after all the other conditions have been satisfied.
+
+We'll demonstrate these two with the classical [FizzBuzz](http://imranontech.com/2007/01/24/using-fizzbuzz-to-find-developers-who-grok-coding/) problem.
 
 ```CSharp
 foreach (var i in Enumerable.Range(1, 100))
-    i.With(x => x % 3 == 0).Do(_ => Console.WriteLine("Fizz"))
-     .With(x => x % 5 == 0).Do(_ => Console.WriteLine("Buzz"))
+    i.When(x => x % 3 == 0).Do(_ => Console.Write("Fizz"))
+     .When(x => x % 5 == 0).Do(_ => Console.Write("Buzz"))
+     .Then(() => Console.WriteLine())
      .Otherwise(x => Console.WriteLine));
 ```
 
