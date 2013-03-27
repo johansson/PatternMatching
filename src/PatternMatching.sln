@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternMatching", "PatternMatching\PatternMatching.csproj", "{B8005FA2-4D05-416A-BCCE-D3A1CE768576}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternMatching.Tests", "PatternMatching.Tests\PatternMatching.Tests.csproj", "{E8488BD9-7A81-4771-963E-1EAA6C821FEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{B8005FA2-4D05-416A-BCCE-D3A1CE768576}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8005FA2-4D05-416A-BCCE-D3A1CE768576}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8005FA2-4D05-416A-BCCE-D3A1CE768576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8488BD9-7A81-4771-963E-1EAA6C821FEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8488BD9-7A81-4771-963E-1EAA6C821FEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8488BD9-7A81-4771-963E-1EAA6C821FEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8488BD9-7A81-4771-963E-1EAA6C821FEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
