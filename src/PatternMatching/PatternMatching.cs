@@ -27,6 +27,8 @@ namespace PatternMatching
 {
     using System;
 
+    internal interface IUnexecutable { }
+
     public class FutureWithPredicate<T>
     {
         public T Value { get; set; }
@@ -36,17 +38,39 @@ namespace PatternMatching
 
     public static class Extensions
     {
-        public static FutureWithPredicate<T> With<T>(this T value, Func<T, bool> predicate)
+        public static Tuple<FutureWithPredicate<T>, bool> With<T>(this T value, Func<T, bool> predicate)
         {
-            return new FutureWithPredicate<T>() { Value = value, Predicate = predicate };
+            /*
+            //
+            // Is it worth the trouble? Doing this would prevent you wanting to use some tuples for your rule processing.
+            // You already have a compiler error if you try to use similar lambdas (as before the Otherwise call) after an Otherwise call.
+            //
+            if (value.GetType() == typeof(Tuple) && value.GetType().IsGenericType && value.GetType().GetGenericArguments().Length == 3)
+                throw new ArgumentException("Cannot do another operation after an otherwise operation.", "value");
+             */
+
+            return new Tuple<FutureWithPredicate<T>, bool>(new FutureWithPredicate<T>() { Value = value, Predicate = predicate }, false);
         }
 
-        public static T Do<T>(this FutureWithPredicate<T> future, Action<T> lambda)
+        public static Tuple<T, bool> Do<T>(this Tuple<FutureWithPredicate<T>, bool> future, Action<T> lambda)
         {
-            if (future.Matched)
-                lambda(future.Value);
+            if (future.Item1.Matched)
+                lambda(future.Item1.Value);
 
-            return future.Value;
+            return new Tuple<T, bool>(future.Item1.Value, future.Item1.Matched | future.Item2);
+        }
+
+        public static Tuple<FutureWithPredicate<T>, bool> With<T>(this Tuple<T, bool> value, Func<T, bool> predicate)
+        {
+            return new Tuple<FutureWithPredicate<T>, bool>(new FutureWithPredicate<T>() { Value = value.Item1, Predicate = predicate }, value.Item2);
+        }
+
+        public static Tuple<T, object> Otherwise<T>(this Tuple<T, bool> result, Action<T> lambda)
+        {
+            if(!result.Item2)
+                lambda(result.Item1);
+
+            return new Tuple<T, object>(result.Item1, new object());
         }
     }
 }

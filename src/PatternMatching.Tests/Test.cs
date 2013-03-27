@@ -25,6 +25,8 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using System.Text;
 
 namespace PatternMatching.Tests
 {
@@ -35,30 +37,30 @@ namespace PatternMatching.Tests
         public void WithEqualPredicate()
         {
             int a = 5;
-            FutureWithPredicate<int> actual = null;
+            Tuple<FutureWithPredicate<int>, bool> actual = null;
             Func<int,bool> predicate = x => x == 5;
 
             actual = a.With(predicate);
 
             Assert.IsNotNull(actual);
-            Assert.AreSame(predicate, actual.Predicate);
-            Assert.AreEqual(a, actual.Value);
-            Assert.IsTrue(actual.Matched);
+            Assert.AreSame(predicate, actual.Item1.Predicate);
+            Assert.AreEqual<int>(a, actual.Item1.Value);
+            Assert.IsTrue(actual.Item1.Matched);
         }
 
         [TestMethod]
         public void WithUnequalPredicate()
         {
             int a = 5;
-            FutureWithPredicate<int> actual = null;
+            Tuple<FutureWithPredicate<int>, bool> actual = null;
             Func<int, bool> predicate = x => x != 5;
 
             actual = a.With(predicate);
 
             Assert.IsNotNull(actual);
-            Assert.AreSame(predicate, actual.Predicate);
-            Assert.AreEqual<int>(a, actual.Value);
-            Assert.IsFalse(actual.Matched);
+            Assert.AreSame(predicate, actual.Item1.Predicate);
+            Assert.AreEqual<int>(a, actual.Item1.Value);
+            Assert.IsFalse(actual.Item1.Matched);
         }
 
         [TestMethod]
@@ -70,7 +72,7 @@ namespace PatternMatching.Tests
             Func<int, bool> predicate = x => x == 5;
             Action<int> lambda = x => output = x.ToString();
 
-            actual = a.With(predicate).Do(lambda);
+            actual = a.With(predicate).Do(lambda).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.AreEqual<string>("5", output);
@@ -85,7 +87,7 @@ namespace PatternMatching.Tests
             Func<int, bool> predicate = x => x != 5;
             Action<int> lambda = x => output = x.ToString();
 
-            actual = a.With(predicate).Do(lambda);
+            actual = a.With(predicate).Do(lambda).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.IsNull(output);
@@ -103,11 +105,144 @@ namespace PatternMatching.Tests
             Action<int> lambda2 = x => output2 = "It is not 5!";
 
             actual = a.With(predicate1).Do(lambda1)
-                        .With(predicate2).Do(lambda2);
+                        .With(predicate2).Do(lambda2).Item1;
 
             Assert.AreEqual<int>(5, actual);
             Assert.AreEqual<string>("It is 5!", output1);
             Assert.IsNull(output2);
+        }
+
+        /*
+         * See note in PatternMatching.cs
+         *
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WithAfterOtherwise()
+        {
+            int a = 5;
+            a.With(x => x > 0).Do(_ => { })
+             .Otherwise(_ => { })
+             .With(x => x.Item1 == 0).Do(_ => { });
+        }
+         */
+
+        [TestMethod]
+        public void FizzBuzz()
+        {
+            var sb = new StringBuilder(640);
+
+            foreach (var i in Enumerable.Range(1, 100))
+                i.With(x => x % 3 == 0).Do(_ => sb.AppendLine("Fizz"))
+                 .With(x => x % 5 == 0).Do(_ => sb.AppendLine("Buzz"))
+                 .Otherwise(x => sb.AppendLine(x.ToString()));
+
+            Assert.AreEqual<string>(@"1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+Fizz
+Buzz
+16
+17
+Fizz
+19
+Buzz
+Fizz
+22
+23
+Fizz
+Buzz
+26
+Fizz
+28
+29
+Fizz
+Buzz
+31
+32
+Fizz
+34
+Buzz
+Fizz
+37
+38
+Fizz
+Buzz
+41
+Fizz
+43
+44
+Fizz
+Buzz
+46
+47
+Fizz
+49
+Buzz
+Fizz
+52
+53
+Fizz
+Buzz
+56
+Fizz
+58
+59
+Fizz
+Buzz
+61
+62
+Fizz
+64
+Buzz
+Fizz
+67
+68
+Fizz
+Buzz
+71
+Fizz
+73
+74
+Fizz
+Buzz
+76
+77
+Fizz
+79
+Buzz
+Fizz
+82
+83
+Fizz
+Buzz
+86
+Fizz
+88
+89
+Fizz
+Buzz
+91
+92
+Fizz
+94
+Buzz
+Fizz
+97
+98
+Fizz
+Buzz
+", sb.ToString());
         }
     }
 }
