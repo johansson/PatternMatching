@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PatternMatching.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tests for PatternMatching, a pattern guard-like library for .NET.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Will Johansson")]
 [assembly: AssemblyProduct("PatternMatching.Tests")]
